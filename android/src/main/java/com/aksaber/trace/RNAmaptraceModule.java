@@ -45,9 +45,9 @@ public class RNAmaptraceModule extends ReactContextBaseJavaModule {
     private Callback aFailCallback;
 
     private AMapTrackClient aMapTrackClient = null;
-    private long serviceId = 0;  // 189016
-    private long terminalId = 0;  // 292085102
-    private String terminalName = "";  // saber
+    private long serviceId = 0;
+    private long terminalId = 0;
+    private String terminalName = "";
 
     public RNAmaptraceModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -56,7 +56,7 @@ public class RNAmaptraceModule extends ReactContextBaseJavaModule {
 
     @Override
     public String getName() {
-        return "AmapTrace";
+        return "RNAmaptrace";
     }
 
     @ReactMethod
@@ -90,7 +90,7 @@ public class RNAmaptraceModule extends ReactContextBaseJavaModule {
             if (status == ErrorCode.TrackListen.START_GATHER_SUCEE ||
                     status == ErrorCode.TrackListen.START_GATHER_ALREADY_STARTED) {
                 System.out.println("定位采集开启成功！");
-                AmapTraceModule.sendEvent("ON_START_GATHER", status, msg);
+                RNAmaptraceModule.sendEvent("ON_START_GATHER", status, msg);
                 // Toast.makeText(TestDemo.this, "定位采集开启成功！", Toast.LENGTH_SHORT).show();
             } else {
                 System.out.println("定位采集开启异常！");
@@ -108,26 +108,26 @@ public class RNAmaptraceModule extends ReactContextBaseJavaModule {
                 aMapTrackClient.startGather(this);
             } else {
                 System.out.println("轨迹上报服务服务启动异常，" + msg);
-                AmapTraceModule.sendEvent("ON_START_TRACK", status, msg);
+                RNAmaptraceModule.sendEvent("ON_START_TRACK", status, msg);
                 // Toast.makeText(TestDemo.this, "轨迹上报服务服务启动异常，" + msg, Toast.LENGTH_SHORT).show();
             }
         }
 
         @Override
         public void onBindServiceCallback(int status, String msg) {
-            AmapTraceModule.sendEvent("ON_BIND_SERVICE", status, msg);;
+            RNAmaptraceModule.sendEvent("ON_BIND_SERVICE", status, msg);;
         }
 
         @Override
         public void onStopGatherCallback(int status, String msg) {
             System.out.println("停止采集回调");
-            AmapTraceModule.sendEvent("ON_STOP_GATHER", status, msg);
+            RNAmaptraceModule.sendEvent("ON_STOP_GATHER", status, msg);
         }
 
         @Override
         public void onStopTrackCallback(int status, String msg) {
             System.out.println("停止服务回调");
-            AmapTraceModule.sendEvent("ON_STOP_TRACK", status, msg);
+            RNAmaptraceModule.sendEvent("ON_STOP_TRACK", status, msg);
         }
     };
 
@@ -228,8 +228,7 @@ public class RNAmaptraceModule extends ReactContextBaseJavaModule {
             100,    // 一页不超过100条
             ""  // 暂未实现，该参数无意义，请留空
         );
-        System.out.println("前前前前前前前前前前前前前前前前前前前前前前前前前前" + Long.parseLong(params.getString("startTime")));
-        System.out.println("后后后后后后后后后后后后后后后后后后后后后后后后后后" + Long.parseLong(params.getString("endTime")));
+        
         aMapTrackClient.queryHistoryTrack(historyTrackRequest, new OnTrackListener() {
             // 参数错误回调
             @Override
@@ -239,9 +238,7 @@ public class RNAmaptraceModule extends ReactContextBaseJavaModule {
             
             @Override
             public void onHistoryTrackCallback(HistoryTrackResponse historyTrackResponse) {
-                System.out.println("错错错错错错错错错错错错错错错错" + historyTrackResponse.getErrorMsg());
                 if (historyTrackResponse.isSuccess()) {
-                    System.out.println("是是是是是是是是是是是是是是是是是是是是是是是是是是是是");
                     HistoryTrack historyTrack = historyTrackResponse.getHistoryTrack();
                     ArrayList<Point> points = historyTrack.getPoints();
                     ArrayList<TracePoint> tracePoints = new ArrayList<>();
@@ -251,11 +248,10 @@ public class RNAmaptraceModule extends ReactContextBaseJavaModule {
                         tracePoint.setLongitude(point.getLng());
                         tracePoints.add(tracePoint);
                     });
-                    AmapTraceModule.sendEvent("LATLNG", 200, JSONObject.toJSONString(tracePoints));
+                    RNAmaptraceModule.sendEvent("LATLNG", 200, JSONObject.toJSONString(tracePoints));
                     // aSucCallback.invoke(JSONObject.toJSONString(tracePoints));
                     // historyTrack中包含终端轨迹信息
                 } else {
-                    System.out.println("否否否否否否否否否否否否否否否否否否否否否否否否否否否否");
                     // aSucCallback.invoke(historyTrackResponse);
                     // 查询失败
                 }
